@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Sortable - Handle empty lists</title>
+  <link rel="stylesheet" href="jquery-ui.css">
+  <link rel="stylesheet" href="jquery-ui.theme.css">
+  <style>
+  #sortable1, #sortable2, #sortable3 { list-style-type: none; margin: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
+  #sortable1 li, #sortable2 li, #sortable3 li { margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
+  </style>
+  <style>
+  #gallery { float: left; width: 65%; min-height: 12em; }
+  .gallery.custom-state-active { background: #eee; }
+  .gallery li { float: left; width: 96px; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: center; }
+  .gallery li h5 { margin: 0 0 0.4em; cursor: move; }
+  .gallery li a { float: right; }
+  .gallery li a.ui-icon-zoomin { float: left; }
+  .gallery li img { width: 100%; cursor: move; }
+ 
+  #trash { float: right; width: 32%; min-height: 18em; padding: 1%; }
+  #trash h4 { line-height: 16px; margin: 0 0 0.4em; }
+  #trash h4 .ui-icon { float: left; }
+  #trash .gallery h5 { display: none; }
+  </style>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+  $( function() {
+    $( "ul.droptrue" ).sortable({
+      connectWith: "ul"
+    });
+ 
+    $( "ul.dropfalse" ).sortable({
+      connectWith: "ul",
+      dropOnEmpty: false
+    });
+ 
+    $( "#sortable1, #sortable2, #sortable3" ).disableSelection();
+  } );
+    $( "tbody" ).sortable();
+
+
+  $( function() {
+  	// Let the thead items be draggable
+ 	var $table = $( "thead > tr" ),$trash_demo = $( "#trash_demo" )
+ 	$( "th", $table ).draggable({
+      cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+      revert: "invalid", // when not dropped, the item will revert back to its initial position
+      containment: "document",
+      helper: "clone",
+      cursor: "move"
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+    // XoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoa
+    // Let the trash be droppable, accepting the th items
+    $trash_demo.droppable({
+      accept: "tr > th",
+      classes: {
+        "ui-droppable-active": "ui-state-highlight"
+      },
+      drop: function( event, ui ) {
+      	// xoa column
+      	
+      	// .find( "fuck" ).remove();
+        deleteImage( ui.draggable );
+      }
+    });
+
+     // Image deletion function
+    var recycle_icon = "<a href='javascript:void(0)' title='Recycle this image' class='ui-icon ui-icon-refresh'>Recycle image</a>";
+    function deleteImage( $item ) {
+      $item.fadeOut(function() {
+        var $list = $( "ul", $trash_demo ).length ?
+          $( "ul", $trash_demo ) :
+          $( "<ul class='gallery ui-helper-reset'/>" ).appendTo(trash_demo);
+ 		// xoa icon remove
+        $item.find( "a.ui-icon-trash" ).remove();
+        // them icon recycle
+         $( ".fuck" ).remove();
+        $item.append( recycle_icon ).appendTo( $list ).fadeIn(function() {
+          $item
+            // .animate({ width: "48px" })
+
+            .find( "img" )
+              // .animate({ height: "36px" });
+        });
+      });
+    }
+
+    // XoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoaXoa
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Let the gallery be droppable as well, accepting items from the trash
+    $table.droppable({
+      accept: "#trash_demo th",
+      classes: {
+        "ui-droppable-active": "custom-state-active"
+      },
+      drop: function( event, ui ) {
+        recycleImage( ui.draggable );
+      }
+    });
+   
+     var trash_icon = "<a href='javascript:void(0)' title='Delete this image' class='ui-icon ui-icon-trash'>Delete image</a>";
+    function recycleImage( $item ) {
+      $item.fadeOut(function() {
+        $item
+          .find( "a.ui-icon-refresh" )
+          .remove()
+          .end()
+          // .css( "width", "96px")
+          .append( trash_icon )
+          .find( "img" )
+            // .css( "height", "72px" )
+          .end()
+          .appendTo( $table )
+          .fadeIn();
+      });
+    }
+    // Resolve the icons behavior with event delegation
+    $( "th" ).on( "click", function( event ) {
+      var $item = $( this ),
+        $target = $( event.target );
+ 
+      if ( $target.is( "a.ui-icon-trash" ) ) {
+        deleteImage( $item );
+      } else if ( $target.is( "a.ui-icon-zoomin" ) ) {
+        viewLargerImage( $target );
+      } else if ( $target.is( "a.ui-icon-refresh" ) ) {
+        recycleImage( $item );
+      }
+ 
+      return false;
+    });
+
+  } );
+  </script>
+</head>
+<body>
+ 
+<ul id="sortable1" class="droptrue">
+  <li class="ui-state-default">Can be dropped..</li>
+  <li class="ui-state-default">..on an empty list</li>
+  <li class="ui-state-default">Item 3</li>
+  <li class="ui-state-default">Item 4</li>
+  <li class="ui-state-default">Item 5</li>
+</ul>
+ 
+<ul id="sortable2" class="dropfalse">
+  <li class="ui-state-highlight">Cannot be dropped..</li>
+  <li class="ui-state-highlight">..on an empty list</li>
+  <li class="ui-state-highlight">Item 3</li>
+  <li class="ui-state-highlight">Item 4</li>
+  <li class="ui-state-highlight">Item 5</li>
+</ul>
+ 
+<ul id="sortable3" class="droptrue">
+</ul>
+ 
+<br style="clear:both">
+<div id="trash_demo" class="ui-widget-content ui-state-default">
+  <h4 class="ui-widget-header"><span class="ui-icon ui-icon-trash">Trash</span> Trash</h4>
+</div>
+ <div class="demo">
+    <h4>demo</h4>
+    <div class="demo-content">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Column 1</th>
+            <th>Column 2</th>
+            <th>Column 3</th>
+            <th>Column 4</th>
+            <th>Column 5</th>
+            <th>Column 6</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>12:10:01 AM</td>
+            <td>28.86</td>
+            <td>0.04</td>
+            <td class="fuck">xoas</td>
+            <td>0.08</td>
+            <td>69.36</td>
+          </tr>
+          <tr>
+            <td>12:20:01 AM</td>
+            <td>26.54</td>
+            <td>0.00</td>
+            <td class="fuck">xoas</td>
+            <td>0.08</td>
+            <td>71.74</td>
+
+          </tr>
+          <tr>
+            <td>12:30:01 AM</td>
+            <td>29.73</td>
+            <td>0.00</td>
+            <td class="fuck">xoas</td>
+            <td>0.09</td>
+            <td>68.52</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+ 
+
+ <div class="ui-widget ui-helper-clearfix">
+ 
+<ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix">
+  <li class="ui-widget-content ui-corner-tr">
+    <h5 class="ui-widget-header">High Tatras</h5>
+    <img src="images/high_tatras_min.jpg" alt="The peaks of High Tatras" width="96" height="72">
+    <a href="images/high_tatras.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+    <a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
+  </li>
+  <li class="ui-widget-content ui-corner-tr">
+    <h5 class="ui-widget-header">High Tatras 2</h5>
+    <img src="images/high_tatras2_min.jpg" alt="The chalet at the Green mountain lake" width="96" height="72">
+    <a href="images/high_tatras2.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+    <a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
+  </li>
+  <li class="ui-widget-content ui-corner-tr">
+    <h5 class="ui-widget-header">High Tatras 3</h5>
+    <img src="images/high_tatras3_min.jpg" alt="Planning the ascent" width="96" height="72">
+    <a href="images/high_tatras3.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+    <a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
+  </li>
+  <li class="ui-widget-content ui-corner-tr">
+    <h5 class="ui-widget-header">High Tatras 4</h5>
+    <img src="images/high_tatras4_min.jpg" alt="On top of Kozi kopka" width="96" height="72">
+    <a href="images/high_tatras4.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+    <a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
+  </li>
+</ul>
+ 
+<div id="trash" class="ui-widget-content ui-state-default">
+  <h4 class="ui-widget-header"><span class="ui-icon ui-icon-trash">Trash</span> Trash</h4>
+</div>
+ 
+</div>
+</body>
+<script type="text/javascript">
+    $( "tr" ).sortable({
+      connectWith: "ul"
+    });
+</script>
+
+</html>
